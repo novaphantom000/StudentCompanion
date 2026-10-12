@@ -25,9 +25,13 @@ object SecurityManager {
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
-        } catch (e: Exception) {
-            DebugLogger.e("SecurityManager", "Failed to init EncryptedSharedPreferences, fallback to standard mode", e)
-            encryptedPrefs = context.getSharedPreferences("fallback_prefs", Context.MODE_PRIVATE)
+        } catch (t: Throwable) {
+            DebugLogger.e("SecurityManager", "Failed to init EncryptedSharedPreferences, fallback to standard SharedPreferences", t)
+            try {
+                encryptedPrefs = context.getSharedPreferences("fallback_prefs", Context.MODE_PRIVATE)
+            } catch (t2: Throwable) {
+                DebugLogger.e("SecurityManager", "Failed to init fallback SharedPreferences", t2)
+            }
         }
     }
 
@@ -40,7 +44,7 @@ object SecurityManager {
     }
 
     fun getEncryptedString(key: String, defaultValue: String? = null): String? {
-        return encryptedPrefs?.getString(key, defaultValue)
+        return encryptedPrefs?.getString(key, defaultValue) ?: defaultValue
     }
 
     fun isAiEnabled(): Boolean {

@@ -1,0 +1,42 @@
+# Requirements Checklist
+
+- [x] **Project Scaffolding & CI**: Complete native Android Kotlin project with Gradle wrapper 8.8, Room, Kapt, DataStore, and GitHub Actions CI workflow (`.github/workflows/build.yml`) for building debug APK artifacts.
+- [x] **Centralized Debug Logger (`DebugLogger`)**: Safe file logging (`debug.log`), size rotation (1MB max), external storage fallback, and automatic sensitive data redaction.
+- [x] **Unified Room Database & Security**: 10 Entities (`SubjectEntity`, `AttendanceRecordEntity`, `TimetableSlotEntity`, `NoteItemEntity`, `AttachmentItemEntity`, `AudioRecordEntity`, `SpacedRecallCardEntity`, `ExamItemEntity`, `StudySessionEntity`, `HolidayEntity`), DAOs, relational foreign keys, indices, and Keystore-backed `SecurityManager`.
+- [x] **Domain Repositories**:
+  - `AttendanceRepository`: Bunk buffer math engine and attendance logging.
+  - `VaultRepository`: Notes, attachments, search indexing.
+  - `SpacedRepetitionRepository`: Leitner 5-box scheduling algorithm with sticky unanswered question handling.
+  - `AudioRepository`: Audio records and timestamp metadata.
+  - `BackupRepository`: Password-derived PBKDF2 + AES-256-GCM encrypted backup/restore covering all entities.
+  - `AiRepository`: Offline-disabled-by-default optional remote Ask AI integration.
+- [x] **Material 3 Expressive UI & Onboarding**:
+  - Light, Dark, OLED, System themes and glass visual cards.
+  - 3-step onboarding flow (Appearance, Default Target Attendance, Optional Modules).
+- [x] **Navigation & Docked Miniplayer**:
+  - Scaffold bottom navigation bar with 6 screens.
+  - Docked miniplayer for note audio playback.
+- [x] **Dashboard Screen**:
+  - Attendance overview chips with bunk buffer calculations (`Can Bunk: N` / `Must Attend: N`).
+  - Due recall cards mini-queue.
+  - Activity streak display.
+- [x] **Attendance & Calendar Screen**:
+  - Daily logging grid with Present/Absent markers.
+  - Subject management modal.
+- [x] **Subject Vaults & Notes**:
+  - Note creation with dynamic subject selection/creation (protecting Room foreign key constraints).
+  - Search filtering across note titles, contents, and imported attachment texts.
+  - Audio playback integration with docked miniplayer.
+  - Ask AI contextual assistant bottom sheet.
+- [x] **Focus Guard & Exam Inspector**:
+  - Live study session timer with dynamic/fallback subject ID resolution.
+  - Emergency Cram Mode toggle.
+  - Upcoming exam inspector with countdown badges.
+- [x] **Profile & Analytics**:
+  - Study session statistics and retrospective tags.
+  - Weekly, Monthly, and Semester time range filters.
+- [x] **Settings Submenus**:
+  - Appearance customization (System/Light/Dark/OLED).
+  - AI configuration (toggle, encrypted key storage).
+  - Storage & Backup restore (AES-256-GCM password-protected backup creation and restore across all database entities).
+  - System & Security (auto-lock setting).

@@ -28,5 +28,16 @@ class VaultRepository(
 
     suspend fun addAttachment(attachment: AttachmentItemEntity): Long = attachmentDao.insertAttachment(attachment)
 
+    suspend fun importAndIndexDocument(noteId: Long, fileName: String, fileUri: String, fileContent: String, fileType: String): Long {
+        val attachment = AttachmentItemEntity(
+            noteId = noteId,
+            fileUri = fileUri,
+            fileName = fileName,
+            fileType = fileType,
+            extractedText = fileContent
+        )
+        return attachmentDao.insertAttachment(attachment)
+    }
+
     fun searchNotesAndDocs(query: String): Flow<List<NoteItemEntity>> = noteDao.searchNotes(query)
 }

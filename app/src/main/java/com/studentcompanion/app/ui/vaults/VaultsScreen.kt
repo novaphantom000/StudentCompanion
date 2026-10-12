@@ -104,9 +104,9 @@ fun VaultsScreen(
                     showAddNoteDialog = false
                 }
             },
-            onCreateSubject = { name, code ->
+            onCreateSubjectAndNote = { name, code, title, content ->
                 coroutineScope.launch {
-                    attendanceRepo.addSubject(
+                    val subjectId = attendanceRepo.addSubject(
                         SubjectEntity(
                             name = name,
                             code = code,
@@ -114,6 +114,14 @@ fun VaultsScreen(
                             targetAttendancePercentage = 75f
                         )
                     )
+                    vaultRepo.saveNote(
+                        NoteItemEntity(
+                            subjectId = subjectId,
+                            title = title,
+                            content = content
+                        )
+                    )
+                    showAddNoteDialog = false
                 }
             }
         )
@@ -188,7 +196,7 @@ fun AddNoteDialog(
     subjects: List<SubjectEntity>,
     onDismiss: () -> Unit,
     onConfirm: (subjectId: Long, title: String, content: String) -> Unit,
-    onCreateSubject: (name: String, code: String) -> Unit
+    onCreateSubjectAndNote: (name: String, code: String, title: String, content: String) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -229,7 +237,7 @@ fun AddNoteDialog(
                     if (title.isNotBlank()) {
                         if (subjects.isEmpty()) {
                             if (newSubjectName.isNotBlank()) {
-                                onCreateSubject(newSubjectName, newSubjectCode)
+                                onCreateSubjectAndNote(newSubjectName, newSubjectCode, title, content)
                             }
                         } else if (selectedSubjectId != null) {
                             onConfirm(selectedSubjectId!!, title, content)

@@ -35,13 +35,22 @@ class BackupRepository(
     )
 
     suspend fun createEncryptedBackup(password: String): ByteArray {
+        val notes = database.noteDao().getAllActiveNotes().first()
+        val attachments = mutableListOf<AttachmentItemEntity>()
+        val audioRecords = mutableListOf<AudioRecordEntity>()
+
+        notes.forEach { note ->
+            attachments.addAll(database.attachmentDao().getAttachmentsForNote(note.id).first())
+            audioRecords.addAll(database.audioRecordDao().getAudioForNote(note.id).first())
+        }
+
         val backupData = CompleteBackupData(
             subjects = database.subjectDao().getAllSubjects().first(),
             attendanceRecords = database.attendanceDao().getAllRecords().first(),
             timetableSlots = database.timetableDao().getAllSlots().first(),
-            noteItems = database.noteDao().getAllActiveNotes().first(),
-            attachmentItems = emptyList(),
-            audioRecords = emptyList(),
+            noteItems = notes,
+            attachmentItems = attachments,
+            audioRecords = audioRecords,
             spacedRecallCards = database.spacedRecallDao().getAllCards().first(),
             examItems = database.examDao().getAllExams().first(),
             studySessions = database.studySessionDao().getAllSessions().first(),
@@ -87,6 +96,8 @@ class BackupRepository(
             data.attendanceRecords.forEach { database.attendanceDao().insertRecord(it) }
             data.timetableSlots.forEach { database.timetableDao().insertSlot(it) }
             data.noteItems.forEach { database.noteDao().insertNote(it) }
+            data.attachmentItems.forEach { database.attachmentDao().insertAttachment(it) }
+            data.audioRecords.forEach { database.audioRecordDao().insertAudioRecord(it) }
             data.spacedRecallCards.forEach { database.spacedRecallDao().insertCard(it) }
             data.examItems.forEach { database.examDao().insertExam(it) }
             data.studySessions.forEach { database.studySessionDao().insertSession(it) }
